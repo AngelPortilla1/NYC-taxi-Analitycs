@@ -4,14 +4,13 @@ Proyecto inicial para la extracción, limpieza y análisis de datos de viajes de
 
 ## Estado del proyecto
 
-Este repositorio se encuentra en una etapa temprana de construcción. La estructura base ya incluye:
+Este repositorio se encuentra en una etapa temprana de construcción. La estructura base incluye:
 
-- extracción de archivos parquet desde el origen de TLC/NYC Taxi
-- almacenamiento de datos crudos en la carpeta `data/`
-- preparación para transformación y limpieza en `src/transform.py`
-- consultas SQL en `queries/clean_taxi_data.sql`
+- un esqueleto para extraer archivos Parquet de TLC/NYC Taxi (`src/extract.py`)
+- las carpetas `data/`, `src/` y `queries/` para organizar el proyecto
+- archivos iniciales para configuración, transformación y consultas SQL
 
-La idea general del pipeline es:
+La extracción y transformación todavía no están implementadas por completo. El flujo previsto es:
 
 1. Descargar los datos de viajes por mes.
 2. Guardarlos en formato parquet en `data/raw`.
@@ -36,33 +35,62 @@ La idea general del pipeline es:
 └── README.md
 ```
 
-## Requisitos
+## Requisitos previos
 
-- Python 3.x
-- pip
-- Docker (opcional, para levantar servicios adicionales si se agregan más componentes)
+- Python 3.8 o superior y `pip`.
+- Docker es opcional; por ahora no es necesario para ejecutar el código disponible.
 
-## Configuración inicial
+## Instalación
 
-1. Clonar el proyecto.
-2. Crear un entorno virtual (opcional, pero recomendado).
-3. Instalar dependencias:
+Desde la raíz del repositorio, crea y activa un entorno virtual:
+
+```bash
+python -m venv .venv
+```
+
+En Windows PowerShell:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+En macOS o Linux:
+
+```bash
+source .venv/bin/activate
+```
+
+Instala las dependencias declaradas:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-> La lista de dependencias se completará a medida que el pipeline avance.
+El extractor importa `requests`. Si aún no está incluido en `requirements.txt`, instálalo en el entorno virtual con:
 
-## Ejecución actual
+```bash
+python -m pip install requests
+```
 
-El extractor base se ejecuta desde el módulo `src/extract.py`:
+## Estado y ejecución
+
+El punto de entrada previsto para la extracción es:
 
 ```bash
 python src/extract.py
 ```
 
-Actualmente, ese script está configurado para generar URLs de descarga para varios meses del año 2023 y descargar archivos parquet en la carpeta `data/raw`.
+**La extracción aún no puede ejecutarse correctamente:** `generate_urls` y `download_parquet` en `src/extract.py` contienen marcadores `TODO` pendientes de implementación. Cuando estén implementados, se podrán cambiar el año y los meses en el bloque `if __name__ == "__main__"` del script.
+
+Ten en cuenta que la ruta de salida actual (`../data/raw`) es relativa al directorio desde el que se ejecuta el comando. Ejecutándolo desde la raíz del repositorio, apunta a una carpeta `data/raw` en el directorio padre, no a `data/raw` dentro del repositorio. Ajusta esa ruta en el script antes de descargar datos para guardarlos en la ubicación esperada.
+
+Los archivos Parquet descargados son datos de entrada y pueden ocupar mucho espacio. Comprueba que la carpeta de destino tenga espacio suficiente y evita subir los datos al repositorio si no corresponde.
+
+## Estructura de datos prevista
+
+- `data/raw/`: archivos Parquet originales descargados.
+- `data/processed/`: datos limpiados y transformados; esta carpeta aún debe definirse e implementarse.
+- `queries/clean_taxi_data.sql`: espacio para las consultas de limpieza/transformación SQL.
 
 ## Pipeline propuesto
 
@@ -84,11 +112,10 @@ Análisis y reportes
 
 ## Próximos pasos
 
-- Completar la lógica de generación de URLs en `src/extract.py`.
-- Implementar la descarga segura de archivos parquet con validación.
-- Definir la estructura de la carpeta `data/processed`.
-- Construir la limpieza de columnas y tipos de datos en `src/transform.py`.
-- Agregar tests, validación y queries analíticas.
+- Completar la generación de URLs y la descarga con validación en `src/extract.py`.
+- Corregir y centralizar la configuración de las rutas de datos.
+- Definir `data/processed/` e implementar la limpieza de columnas y tipos en `src/transform.py`.
+- Completar las consultas SQL y agregar pruebas y validaciones.
 
 ## Nota
 
